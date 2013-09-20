@@ -41,6 +41,7 @@ class OBD_Console():
         for index,  e in enumerate(obd_sensors.SENSORS):
             (name,  value,  unit) = self.port.sensor(index)
             print name,  value,  unit
+#            print index, e.name
 
 c = OBD_Console()
 c.connect()
