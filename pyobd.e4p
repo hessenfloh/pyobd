@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-4.6.dtd">
 <!-- eric4 project file for project pyobd -->
-<!-- Saved: 2013-09-20, 13:34:21 -->
+<!-- Saved: 2013-09-20, 16:02:47 -->
 <!-- Copyright (C) 2013 Florian Benischke,  -->
 <Project version="4.6">
   <Language></Language>
@@ -20,6 +20,7 @@
     <Source>obd_capture.py</Source>
     <Source>obd_recorder.py</Source>
     <Source>__init__.py</Source>
+    <Source>obd_console.py</Source>
   </Sources>
   <Forms>
   </Forms>
