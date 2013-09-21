@@ -39,11 +39,15 @@ class OBD_Console():
         
         print "Showing current obd data:"
         for index,  e in enumerate(obd_sensors.SENSORS):
-            (name,  value,  unit) = self.port.sensor(index)
-            print name,  value,  unit
+            if(self.port.State != 0):
+                (name,  value,  unit) = self.port.sensor(index)
+                print name,  value,  unit
 
 c = OBD_Console()
 c.connect()
 if(c.is_connected()):
-     c.showOBDData()
+  c.showOBDData()
+else:
+  for index, e in enumerate(obd_sensors.SENSORS):
+    print index, e.name
     
