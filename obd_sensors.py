@@ -44,7 +44,7 @@ def rpm(code):
 
 def speed(code):
     code = hex_to_int(code)
-    return code / 1.609
+    return code
 
 def percent_scale(code):
     code = hex_to_int(code)
@@ -147,7 +147,7 @@ SENSORS = [
     Sensor("fuel_pressure"         , "      Fuel Rail Pressure", "010A", cpass            ,""       ),
     Sensor("manifold_pressure"     , "Intake Manifold Pressure", "010B", intake_m_pres    ,"psi"    ),
     Sensor("rpm"                   , "              Engine RPM", "010C1", rpm              ,""       ),
-    Sensor("speed"                 , "           Vehicle Speed", "010D1", speed            ,"MPH"    ),
+    Sensor("speed"                 , "           Vehicle Speed", "010D1", speed            ,"KMH"    ),
     Sensor("timing_advance"        , "          Timing Advance", "010E", timing_advance   ,"degrees"),
     Sensor("intake_air_temp"       , "         Intake Air Temp", "010F", temp             ,"C"      ),
     Sensor("maf"                   , "     Air Flow Rate (MAF)", "0110", maf              ,"lb/min" ),

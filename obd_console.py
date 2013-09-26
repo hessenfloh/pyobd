@@ -6,13 +6,18 @@ import platform
 import obd_sensors
 from datetime import datetime
 import time
+import MySqldb
 
 from obd_utils import scanSerial
 
 class OBD_Console():
     def __init__(self):
         self.port = None
-        
+        self.mysql = MySqldb.connect("localhost", "obdlogger", "HSNtHVvTpE5CSUPa", "obdlogger")
+        self.cursor = self.mysql.cursor()
+        self.cursor.execute("INSERT INTO trip (description) VALUES ('')")
+        self.cursor.execute("SELECT MAX(id) FROM trip")
+        self.tripid = self.cursor.fetchone()
     
     def connect(self):
         portnames = scanSerial()
@@ -31,7 +36,11 @@ class OBD_Console():
             
     def is_connected(self):
         return self.port
-        
+
+    def addDatapoint(self):
+        self.cursor.execute("INSERT INTO datapoint (tripid) VALUES (%s)", self.tripid)
+        self.cursor.execute("SELECT MAX(datapointid) FROM datapoint WHERE tripid=%s", self.tripid)
+        self.datapointid = self.cursor.fetchone()
 
     def showOBDData(self):
         if(self.port is None):
@@ -42,6 +51,11 @@ class OBD_Console():
             if(self.port.State != 0):
                 (name,  value,  unit) = self.port.sensor(index)
                 print name,  value,  unit
+                self.cursor.execute("INSERT INTO sensorvalues "
+                                    "(tripid, datapointid, sensorid, name, value, unit)"
+                                    " VALUES (%s, %s, %s, %s, %s, %s"
+                                    , self.tripid, self.datapointid, index, name, value, unit)
+
 
 c = OBD_Console()
 c.connect()
