@@ -6,19 +6,22 @@ import platform
 import obd_sensors
 from datetime import datetime
 import time
-import MySqldb
+import mysql.connector
 
 from obd_utils import scanSerial
 
 class OBD_Console():
     def __init__(self):
         self.port = None
-        self.mysql = MySqldb.connect("localhost", "obdlogger", "HSNtHVvTpE5CSUPa", "obdlogger")
+        self.mysql = mysql.connector.Connect(host="localhost", user="obdlogger", password="HSNtHVvTpE5CSUPa"
+            , database="obdlogger")
         self.cursor = self.mysql.cursor()
+        self.cursor.execute("SELECT MAX(id) FROM trip")
+        self.tripid = self.cursor.fetchone()
         self.cursor.execute("INSERT INTO trip (description) VALUES ('')")
         self.cursor.execute("SELECT MAX(id) FROM trip")
         self.tripid = self.cursor.fetchone()
-    
+
     def connect(self):
         portnames = scanSerial()
         #portnames = ['COM10']
@@ -51,17 +54,27 @@ class OBD_Console():
             if(self.port.State != 0):
                 (name,  value,  unit) = self.port.sensor(index)
                 print name,  value,  unit
-                self.cursor.execute("INSERT INTO sensorvalues "
-                                    "(tripid, datapointid, sensorid, name, value, unit)"
-                                    " VALUES (%s, %s, %s, %s, %s, %s"
-                                    , self.tripid, self.datapointid, index, name, value, unit)
+
+    def addSensorData(self, index, name, value, unit):
+        params = (repr(self.tripid[0]), repr(self.datapointid[0]), str(index), name, value, unit)
+        self.cursor.execute("INSERT INTO sensorvalues "
+                            "(tripid, datapointid, sensorid, name, value, unit)"
+                            " VALUES (%s, %s, %s, %s, %s, %s)"
+                            , params)
+
 
 
 c = OBD_Console()
 c.connect()
 if(c.is_connected()):
-  c.showOBDData()
+    c.addDatapoint()
+    c.mysql.commit()
+    c.showOBDData()
+    c.mysql.commit()
 else:
-  for index, e in enumerate(obd_sensors.SENSORS):
-    print index, e.name
-    
+    c.addDatapoint()
+    c.mysql.commit()
+    for index, e in enumerate(obd_sensors.SENSORS):
+        print index, e.name
+        c.addSensorData(index, e.name, e.cmd, e.unit)
+    c.mysql.commit()
